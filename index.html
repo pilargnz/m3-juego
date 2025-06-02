@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maybelline Dice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fff5f8 0%, #fce4ec 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-screen {
+            position: relative;
+            z-index: 2;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, #ff2d7a, #9c27b0);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            left: 80%;
+            animation-delay: -2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -4s;
+        }
+
+        .shape:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            top: 30%;
+            left: 70%;
+            animation-delay: -6s;
+        }
+
+        .shape:nth-child(5) {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            left: 40%;
+            animation-delay: -8s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 50px) rotate(270deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .logo {
+            width: 600px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                width: 300px;
+            }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: #ff2d7a;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .instructions {
+            margin-bottom: 2rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: #ff2d7a;
+            color: white;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: #e61e6b;
+            box-shadow: 0 4px 15px rgba(255, 45, 122, 0.3);
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem auto;
+            max-width: 400px;
+        }
+
+        .color-btn {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .color-btn.active {
+            filter: brightness(1.5);
+        }
+
+        .round-counter {
+            font-size: 1.2rem;
+            color: #ff2d7a;
+            margin: 1rem 0;
+        }
+
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-image {
+            width: 400px;
+            margin: 1.5rem 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(255, 45, 122, 0.15);
+            border: 2px solid #ff2d7a;
+        }
+
+        .result-image.win {
+            animation: bounce 1s ease infinite;
+            border-color: #ff2d7a;
+            background: linear-gradient(135deg, #fff5f8 0%, #fff 100%);
+        }
+
+        .result-image.lose {
+            animation: shake 0.5s ease-in-out;
+            border-color: #9c27b0;
+            background: linear-gradient(135deg, #f3e5f5 0%, #fff 100%);
+        }
+
+        .result-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .win-message {
+            color: #ff2d7a;
+            text-shadow: 0 0 10px rgba(255, 45, 122, 0.3);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 45, 122, 0.3); }
+            50% { text-shadow: 0 0 20px rgba(255, 45, 122, 0.6); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff2d7a;
+            animation: confetti 3s linear infinite;
+            z-index: 1000;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        .result-message {
+            color: #666;
+            margin: 1rem 0 2rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                max-width: 300px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .result-image {
+                width: 320px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="container">
+        <!-- Pantalla de Bienvenida -->
+        <div id="welcome-screen" class="screen active">
+            <img src="imagenes/Maybelline-Logo-3.png" alt="Maybelline Logo" class="logo">
+            <h1>Gana un Gloss</h1>
+            <p class="instructions">
+                ¡Demuestra tu memoria y gana un Gloss de Maybelline!<br>
+                Repite la secuencia de colores que Maybelline te muestre.<br>
+                Completa 5 rondas para ganar.
+            </p>
+            <button class="btn" onclick="startGame()">Comenzar</button>
+        </div>
+
+        <!-- Pantalla del Juego -->
+        <div id="game-screen" class="screen">
+            <h1>Maybelline Dice</h1>
+            <div class="round-counter">Ronda: <span id="round">1</span>/5</div>
+            <div class="game-container">
+                <button class="color-btn" style="background: #ff2d7a" data-color="pink"></button>
+                <button class="color-btn" style="background: #9c27b0" data-color="purple"></button>
+                <button class="color-btn" style="background: #ff9800" data-color="orange"></button>
+                <button class="color-btn" style="background: #2196f3" data-color="blue"></button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Resultado -->
+        <div id="result-screen" class="screen">
+            <h1 id="result-title"></h1>
+            <p id="result-message" class="result-message"></p>
+            <div class="result-container">
+                <div id="result-image" class="result-image">
+                    <img src="" alt="Premio">
+                </div>
+            </div>
+            <button class="btn" onclick="resetGame()">Volver a Jugar</button>
+        </div>
+    </div>
+
+    <script>
+        const colors = ['pink', 'purple', 'orange', 'blue'];
+        let sequence = [];
+        let playerSequence = [];
+        let round = 1;
+        let isPlaying = false;
+        const MAX_ROUNDS = 5;
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() {
+            sequence = [];
+            playerSequence = [];
+            round = 1;
+            updateRoundCounter();
+            showScreen('game-screen');
+            setTimeout(() => {
+                addToSequence();
+            }, 1000);
+        }
+
+        function addToSequence() {
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            sequence.push(randomColor);
+            playSequence();
+        }
+
+        function playSequence() {
+            let i = 0;
+            isPlaying = true;
+            const interval = setInterval(() => {
+                if (i >= sequence.length) {
+                    clearInterval(interval);
+                    isPlaying = false;
+                    return;
+                }
+                const color = sequence[i];
+                const button = document.querySelector(`[data-color="${color}"]`);
+                button.classList.add('active');
+                setTimeout(() => {
+                    button.classList.remove('active');
+                }, 500);
+                i++;
+            }, 1000);
+        }
+
+        function updateRoundCounter() {
+            document.getElementById('round').textContent = round;
+        }
+
+        document.querySelectorAll('.color-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                if (isPlaying) return;
+                
+                const color = button.dataset.color;
+                button.classList.add('active');
+                setTimeout(() => {
+                    button.classList.remove('active');
+                }, 200);
+
+                playerSequence.push(color);
+                checkSequence();
+            });
+        });
+
+        function checkSequence() {
+            const currentIndex = playerSequence.length - 1;
+            if (playerSequence[currentIndex] !== sequence[currentIndex]) {
+                showResult(false);
+                return;
+            }
+
+            if (playerSequence.length === sequence.length) {
+                if (round === MAX_ROUNDS) {
+                    showResult(true);
+                } else {
+                    round++;
+                    updateRoundCounter();
+                    playerSequence = [];
+                    setTimeout(() => {
+                        addToSequence();
+                    }, 1000);
+                }
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#ff2d7a', '#9c27b0', '#ff9800', '#2196f3'];
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                celebration.appendChild(confetti);
+            }
+            
+            document.body.appendChild(celebration);
+            setTimeout(() => celebration.remove(), 5000);
+        }
+
+        function showResult(win) {
+            const resultTitle = document.getElementById('result-title');
+            const resultMessage = document.getElementById('result-message');
+            const resultImage = document.getElementById('result-image');
+            const resultImageImg = resultImage.querySelector('img');
+            
+            if (win) {
+                resultTitle.className = 'win-message';
+                resultTitle.textContent = '¡Ganaste un Gloss!';
+                resultMessage.textContent = '¡Felicitaciones! Has demostrado una memoria increíble. Disfruta de tu Gloss Color Sensational Shine Compulsion.';
+                resultImageImg.src = 'imagenes/inicio.jpg';
+                resultImage.classList.add('win');
+                createConfetti();
+            } else {
+                resultTitle.className = '';
+                resultTitle.textContent = '¡Gracias por jugar!';
+                resultMessage.textContent = '¡Gracias por participar! Vuelve pronto para intentarlo de nuevo y ganar tu Gloss de Maybelline.';
+                resultImageImg.src = 'imagenes/fail .png';
+                resultImage.classList.add('lose');
+            }
+            
+            showScreen('result-screen');
+        }
+
+        function resetGame() {
+            const resultImage = document.getElementById('result-image');
+            resultImage.classList.remove('win', 'lose');
+            showScreen('welcome-screen');
+        }
+    </script>
+</body>
+</html> 
